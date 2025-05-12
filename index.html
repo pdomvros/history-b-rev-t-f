@@ -1,1 +1,220 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Επανάληψη Ιστορίας Β' Γυμνασίου</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Comfortaa', sans-serif;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            background-color: black;
+            color: gold;
+            padding: 20px;
+            font-size: 36px;
+            text-transform: none;
+        }
+        .creator, .director {
+            background-color: black;
+            color: gold;
+            padding: 10px;
+            font-size: 18px;
+        }
+        .emojis {
+            font-size: 30px;
+            margin-top: 20px;
+        }
+        .score-box {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .question-container {
+            margin: 30px;
+        }
+        .question {
+            margin: 15px 0;
+            padding: 15px;
+            font-size: 120%;
+            background-color: #0b3d91;
+            color: gold;
+            border-radius: 10px;
+            position: relative;
+            font-weight: bold;
+            text-shadow:
+                1px 1px 0px rgba(0, 0, 0, 0.8),
+               -1px -1px 0px rgba(255, 255, 255, 0.2);
+        }
+        .question-number {
+            text-decoration: underline;
+        }
+        .emoji {
+            display: block;
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        .true, .false {
+            font-size: 20px;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #777;
+            color: white;
+            border: none;
+        }
+        .true:hover, .false:hover {
+            background-color: #999;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
 
+<div class="creator">
+    Δημιουργία/Επιμέλεια: Παναγιώτης Δόμβρος (CC BY-NC)
+</div>
+<div class="director">
+    Διευθυντής 1ου Γυμνασίου Πυλαίας
+</div>
+
+<h1>Επανάληψη Ιστορίας Β' Γυμνασίου</h1>
+
+<div class="emojis">
+    🏛️ ⚔️ 🛡️ 📜 🏺
+</div>
+
+<div class="score-box">
+    Σκορ: <span id="score">0</span> / 50
+</div>
+
+<div class="question-container"></div>
+
+<audio id="successAudio" src="success-sound.mp3"></audio>
+<audio id="failAudio" src="fail-sound.mp3"></audio>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let score = 0;
+        let currentQuestion = 0;
+        const questions = [
+            { question: 'Ο Κωνσταντίνος Α΄ ίδρυσε την Κωνσταντινούπολη ως νέο διοικητικό κέντρο της Αυτοκρατορίας.', answer: true },
+            { question: 'Ο Κωνσταντίνος Α΄ αναγνώρισε το δικαίωμα άσκησης της χριστιανικής λατρείας.', answer: true },
+            { question: 'Η Κωνσταντινούπολη ιδρύθηκε το 330 μ.Χ. στις 11 Μαΐου.', answer: true },
+            { question: 'Ο Κωνσταντίνος Α΄ μετέφερε την πρωτεύουσα στο Βυζάντιο λόγω της κακής γεωπολιτικής του θέσης.', answer: false },
+            { question: 'Το Χριστόγραμμα ήταν σύμβολο που μετέφερε ο Κωνσταντίνος Α΄ από τα νομίσματα στη στρατιωτική σημαία.', answer: false },
+            { question: 'Το διάταγμα των Μεδιολάνων εξισώνει τα δικαιώματα των Χριστιανών με αυτά των άλλων θρησκειών.', answer: true },
+            { question: 'Ο Ιουστινιανός βασίστηκε στην αρχή "ένα κράτος, μια εκκλησία, μια νομοθεσία".', answer: true },
+            { question: 'Ο Ιουστινιανός αντιμετώπισε την εξέγερση του Νίκα ενισχύοντας τους δήμους του Ιπποδρόμου.', answer: false },
+            { question: 'Ο Ιουστινιανός κωδικοποίησε το Ρωμαϊκό δίκαιο.', answer: true },
+            { question: 'Η Αγία Σοφία είναι κτίσμα του ρυθμού "βασιλική με τρούλο".', answer: true },
+            { question: 'Ο Ηράκλειος κατάφερε να νικήσει τους Πέρσες στη μάχη της Νινευί.', answer: true },
+            { question: 'Τα θέματα ήταν διοικητικές περιφέρειες χωρίς στρατό.', answer: false },
+            { question: 'Ο Ηράκλειος υιοθέτησε τον τίτλο "βασιλεύς πιστός εν Χριστώ".', answer: true },
+            { question: 'Οι σκλαβηνίες ήταν αυτόνομες νησίδες ελληνικού πληθυσμού ανάμεσα σε Σλάβους.', answer: false },
+            { question: 'Οι Σλάβοι αρχικά επιδίδονταν σε λεηλασίες και επιθέσεις.', answer: true },
+            { question: 'Οι Άραβες επινόησαν την εμπορική επιταγή (τσεκ).', answer: true },
+            { question: 'Οι Άραβες μετέφρασαν έργα Ελλήνων, Ινδών και Περσών.', answer: true },
+            { question: 'Η εικονομαχία διήρκεσε από τις αρχές του 8ου ως τα μέσα του 9ου αιώνα.', answer: true },
+            { question: 'Ο Λέων Γ΄ ο Ίσαυρος ήταν εικονολάτρης.', answer: false },
+            { question: 'Οι εικονομάχοι πίστευαν ότι οι εικόνες ήταν είδωλα.', answer: true },
+            { question: 'Οι εικονολάτρες υποστήριζαν ότι προσκυνούσαν την ύλη των εικόνων.', answer: false },
+            { question: 'Οι αδελφοί Μεθόδιος και Κωνσταντίνος ήταν από τη Θεσσαλονίκη.', answer: true },
+            { question: 'Ο Κωνσταντίνος (Κύριλλος) δημιούργησε το σλαβικό αλφάβητο.', answer: true },
+            { question: 'Η Ρωμαϊκή εκκλησία πίστευε ότι ο Θεός μπορεί να τιμηθεί σε όλες τις γλώσσες.', answer: false },
+            { question: 'Οι δυνατοί προέκυψαν από τη συγχώνευση της αριστοκρατίας της γης και των αξιωμάτων.', answer: true },
+            { question: 'Οι πένητες αποτελούνταν κυρίως από ελεύθερους γαιοκτήμονες και ακτήμονες γεωργούς.', answer: true },
+            { question: 'Τα χωρία ή προάστια ήταν μεγάλες συνεχόμενες εκτάσεις γης.', answer: false },
+            { question: 'Οι Μακεδόνες αυτοκράτορες ήθελαν να περιορίσουν τη δύναμη των δυνατών.', answer: true },
+            { question: 'Οι δυνατοί υποχρεώθηκαν να πληρώνουν τους φόρους των φτωχών του χωριού.', answer: true },
+            { question: 'Τα συστήματα ήταν σωματεία εμπόρων και βιοτεχνών.', answer: true },
+            { question: 'Η μεσαία τάξη περιλάμβανε εμποροβιοτέχνες, ναυκλήρους και τραπεζίτες.', answer: true },
+            { question: 'Το 11ο αιώνα το Βυζάντιο αντικατέστησε τους θεματικούς στρατούς με ξένους μισθοφόρους.', answer: true },
+            { question: 'Οι Σελτζούκοι νίκησαν τους Βυζαντινούς στη μάχη του Ματζικέρτ το 1071.', answer: true },
+            { question: 'Ο θεσμός της Πρόνοιας βασιζόταν στην παραχώρηση γης με αντάλλαγμα στρατιωτικές υπηρεσίες.', answer: true },
+            { question: 'Ο Βυζαντινός στρατός εξολοθρεύτηκε το 1176 στο Μυριοκέφαλο από τους Πέρσες.', answer: false },
+            { question: 'Το χρυσόβουλο του 1082 έδωσε προνόμια στους Γενουάτες.', answer: false },
+            { question: 'Το χρυσόβουλο επέτρεπε στους Βενετούς να εμπορεύονται χωρίς δασμούς σε βυζαντινά λιμάνια.', answer: true },
+            { question: 'Το σχίσμα των Εκκλησιών αφορούσε το ζήτημα της κυριαρχίας επί της χριστιανικής οικουμένης.', answer: true },
+            { question: 'Οι σταυροφορίες προήλθαν από πρωτοβουλία των Γερμανών αυτοκρατόρων.', answer: false },
+            { question: 'Η Δ΄ Σταυροφορία κατέληξε στην κατάληψη της Κωνσταντινούπολης το 1204.', answer: true },
+            { question: 'Οι Οθωμανοί χρησιμοποίησαν το παιδομάζωμα για να ενισχύσουν το στρατό τους.', answer: true },
+            { question: 'Το παιδομάζωμα αφορούσε τη στρατολόγηση χριστιανόπαιδων που εξισλαμίζονταν.', answer: true },
+            { question: 'Ο Μωάμεθ Β΄ έχτισε το φρούριο της Ρουμέλης για να εμποδίσει τον επισιτισμό της Πόλης.', answer: true },
+            { question: 'Η πολιορκία της Κωνσταντινούπολης το 1453 κράτησε 54 ημέρες.', answer: true },
+            { question: 'Ο Κωνσταντίνος ΙΑ΄ ήταν ο τελευταίος αυτοκράτορας του Βυζαντίου.', answer: true },
+            { question: 'Η άλωση της Κωνσταντινούπολης έγινε την 29η Μαΐου 1453.', answer: true },
+            { question: 'Ο Μωάμεθ Β΄ προσευχήθηκε στην Αγία Σοφιά μετά την άλωση της Πόλης.', answer: true },
+            { question: 'Η άλωση της Κωνσταντινούπολης τραυμάτισε την περηφάνια των Ελλήνων.', answer: true },
+            { question: 'Οι λόγιοι του Βυζαντίου μετέφεραν το πνεύμα του Βυζαντίου στη Δύση μετά την άλωση.', answer: true }
+        ];
+        const ancientEmojis = ['🏛️', '⚔️', '🛡️', '📜', '🏺'];
+        const container = document.querySelector('.question-container');
+
+        function showQuestion(index) {
+            container.innerHTML = '';
+            const q = questions[index];
+            const emojiDiv = document.createElement('div');
+            emojiDiv.classList.add('emoji');
+            emojiDiv.textContent = ancientEmojis[index % ancientEmojis.length];
+
+            const qDiv = document.createElement('div');
+            qDiv.classList.add('question');
+            qDiv.innerHTML = `<span class="question-number">Ερώτηση ${index + 1}:</span> ${q.question}`;
+
+            const btnTrue = document.createElement('button');
+            btnTrue.classList.add('true');
+            btnTrue.textContent = 'Σωστό';
+            btnTrue.onclick = () => checkAnswer(true, index);
+
+            const btnFalse = document.createElement('button');
+            btnFalse.classList.add('false');
+            btnFalse.textContent = 'Λάθος';
+            btnFalse.onclick = () => checkAnswer(false, index);
+
+            qDiv.prepend(emojiDiv);
+            container.appendChild(qDiv);
+            qDiv.appendChild(document.createElement('br'));
+            qDiv.appendChild(document.createElement('br'));
+            qDiv.appendChild(btnTrue);
+            qDiv.appendChild(btnFalse);
+        }
+
+        function checkAnswer(isCorrect, questionIndex) {
+            const correct = questions[questionIndex].answer;
+            const audio = isCorrect === correct ? document.getElementById('successAudio') : document.getElementById('failAudio');
+            audio.play();
+            const qDiv = container.querySelector('.question');
+            qDiv.style.backgroundColor = isCorrect === correct ? 'green' : 'red';
+            if (isCorrect === correct) score++;
+            document.getElementById('score').textContent = score;
+            
+            const buttons = qDiv.querySelectorAll('button');
+            buttons.forEach(btn => { btn.disabled = true; });
+            
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    showQuestion(currentQuestion);
+                } else {
+                    container.innerHTML = `<div class="question">Τέλος του κουίζ!<br>Το τελικό σου σκορ: ${score}/${questions.length}</div>`;
+                }
+            }, 1000);
+        }
+
+        showQuestion(0);
+    });
+</script>
+</body>
+</html>
